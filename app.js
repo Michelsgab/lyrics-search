@@ -27,16 +27,24 @@ const insertSongsIntoPage = (songsInfo) => {
         </button>
     </li>`
     )
-    .join("")
+    .join("");
 
   if (songsInfo.prev || songsInfo.next) {
     prevAndNextContainer.innerHTML = `
-      ${songsInfo.prev ? `<button class="btn" onClick="getMoreSongs('${songsInfo.prev}')">Previous</button>` : ""}
-      ${songsInfo.next ? `<button class="btn" onClick="getMoreSongs('${songsInfo.next}')">Next</button>` : ""}
-    `
-    return
+      ${
+        songsInfo.prev
+          ? `<button class="btn" onClick="getMoreSongs('${songsInfo.prev}')">Previous</button>`
+          : ""
+      }
+      ${
+        songsInfo.next
+          ? `<button class="btn" onClick="getMoreSongs('${songsInfo.next}')">Next</button>`
+          : ""
+      }
+    `;
+    return;
   }
-  prevAndNextContainer.innerHTML = ""
+  prevAndNextContainer.innerHTML = "";
 };
 
 const fetchSongs = async (term) => {
@@ -56,4 +64,20 @@ form.addEventListener("submit", (event) => {
   }
 
   fetchSongs(searchTerm);
+});
+
+const fetchLyrics = async (artist, songTitle) => {
+  const response = await fetch(`${apiURL}/v1/${artist}/${songTitle}`);
+  const data = await response.json();
+};
+
+songsContainer.addEventListener("click", (event) => {
+  const clickedElement = event.target;
+
+  if (clickedElement.tagName === "BUTTON") {
+    const artist = clickedElement.getAttribute("data-artist");
+    const songTitle = clickedElement.getAttribute("data-song-title");
+
+    fetchLyrics(artist, songTitle);
+  }
 });
