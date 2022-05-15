@@ -15,37 +15,41 @@ const getMoreSongs = async (url) => {
   insertSongsIntoPage(data);
 };
 
-const insertSongsIntoPage = (songsInfo) => {
-  songsContainer.innerHTML = songsInfo.data
+const insertNextAndPrevButtons = ({prev, next}) => {
+  prevAndNextContainer.innerHTML = `
+    ${
+      prev
+        ? `<button class="btn" onClick="getMoreSongs('${prev}')">Previous</button>`
+        : ""
+    }
+    ${
+      next
+        ? `<button class="btn" onClick="getMoreSongs('${next}')">Next</button>`
+        : ""
+    }
+  `;
+};
+
+const insertSongsIntoPage = ({data, prev, next}) => {
+  songsContainer.innerHTML = data
     .map(
-      (song) => `
+      ({artist: {name}, title}) => `
     <li class="song">
         <span class="song-artist">
-            <strong>${song.artist.name}</strong> - ${song.title}
+            <strong>${name}</strong> - ${title}
         </span>
         <button 
             class="btn" 
-            data-artist="${song.artist.name}" 
-            data-song-title="${song.title}">
+            data-artist="${name}" 
+            data-song-title="${title}">
                 See lyrics
         </button>
     </li>`
     )
     .join("");
 
-  if (songsInfo.prev || songsInfo.next) {
-    prevAndNextContainer.innerHTML = `
-      ${
-        songsInfo.prev
-          ? `<button class="btn" onClick="getMoreSongs('${songsInfo.prev}')">Previous</button>`
-          : ""
-      }
-      ${
-        songsInfo.next
-          ? `<button class="btn" onClick="getMoreSongs('${songsInfo.next}')">Next</button>`
-          : ""
-      }
-    `;
+  if (prev || next) {
+    insertNextAndPrevButtons({prev, next});
     return;
   }
   prevAndNextContainer.innerHTML = "";
@@ -68,7 +72,7 @@ form.addEventListener("submit", (event) => {
   fetchSongs(searchTerm);
 });
 
-const insertLyricsIntoPage = ({lyrics, artist, songTitle}) => {
+const insertLyricsIntoPage = ({ lyrics, artist, songTitle }) => {
   songsContainer.innerHTML = `
     <li class="lyrics-container">
         <h2><strong>${songTitle}</strong> - ${artist}</h2>
