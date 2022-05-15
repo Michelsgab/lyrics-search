@@ -5,20 +5,35 @@ const prevAndNextContainer = document.querySelector("#prev-and-next-container");
 
 const apiURL = `https://api.lyrics.ovh`;
 
-const insertSongsIntoPage = songsInfo => {
-    songsContainer.innerHTML = songsInfo.data.map()
-}
+const insertSongsIntoPage = (songsInfo) => {
+  songsContainer.innerHTML = songsInfo.data
+    .map(
+      (song) => `
+    <li class="song">
+        <span class="song-artist">
+            <strong>${song.artist.name}</strong> - ${song.title}
+        </span>
+        <button 
+            class="btn" 
+            data-artist="${song.artist.name}" 
+            data-song-title="${song.title}">
+                See lyrics
+        </button>
+    </li>`
+    )
+    .join("");
+};
 
 const fetchSongs = async (term) => {
   const response = await fetch(`${apiURL}/suggest/${term}`);
   const data = await response.json();
 
   insertSongsIntoPage(data);
-//   fetch(`${apiURL}/suggest/${term}`)
-//     .then((response) => response.json())
-//     .then((data) => {
-//       console.log(data[0]);
-//     });
+  //   fetch(`${apiURL}/suggest/${term}`)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       console.log(data[0]);
+  //     });
 };
 
 form.addEventListener("submit", (event) => {
