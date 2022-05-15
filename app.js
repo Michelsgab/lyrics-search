@@ -15,7 +15,7 @@ const getMoreSongs = async (url) => {
   insertSongsIntoPage(data);
 };
 
-const insertNextAndPrevButtons = ({prev, next}) => {
+const insertNextAndPrevButtons = ({ prev, next }) => {
   prevAndNextContainer.innerHTML = `
     ${
       prev
@@ -30,10 +30,10 @@ const insertNextAndPrevButtons = ({prev, next}) => {
   `;
 };
 
-const insertSongsIntoPage = ({data, prev, next}) => {
+const insertSongsIntoPage = ({ data, prev, next }) => {
   songsContainer.innerHTML = data
     .map(
-      ({artist: {name}, title}) => `
+      ({ artist: { name }, title }) => `
     <li class="song">
         <span class="song-artist">
             <strong>${name}</strong> - ${title}
@@ -49,7 +49,7 @@ const insertSongsIntoPage = ({data, prev, next}) => {
     .join("");
 
   if (prev || next) {
-    insertNextAndPrevButtons({prev, next});
+    insertNextAndPrevButtons({ prev, next });
     return;
   }
   prevAndNextContainer.innerHTML = "";
@@ -60,17 +60,22 @@ const fetchSongs = async (term) => {
   insertSongsIntoPage(data);
 };
 
-form.addEventListener("submit", (event) => {
+const handleFormSubmit = (event) => {
   event.preventDefault();
 
   const searchTerm = searchInput.value.trim();
+  searchInput.value = "";
+  searchInput.focus();
+
   if (!searchTerm) {
     songsContainer.innerHTML = `<li class="warning-message">Sorry, the content area wat not found</li>`;
     return;
   }
 
   fetchSongs(searchTerm);
-});
+};
+
+form.addEventListener("submit", handleFormSubmit);
 
 const insertLyricsIntoPage = ({ lyrics, artist, songTitle }) => {
   songsContainer.innerHTML = `
@@ -87,7 +92,7 @@ const fetchLyrics = async (artist, songTitle) => {
   insertLyricsIntoPage({ lyrics, artist, songTitle });
 };
 
-songsContainer.addEventListener("click", (event) => {
+const handleSongsContainerClick = (event) => {
   const clickedElement = event.target;
 
   if (clickedElement.tagName === "BUTTON") {
@@ -97,4 +102,6 @@ songsContainer.addEventListener("click", (event) => {
     prevAndNextContainer.innerHTML = "";
     fetchLyrics(artist, songTitle);
   }
-});
+};
+
+songsContainer.addEventListener("click", handleSongsContainerClick);
