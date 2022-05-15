@@ -5,6 +5,12 @@ const prevAndNextContainer = document.querySelector("#prev-and-next-container");
 
 const apiURL = `https://api.lyrics.ovh`;
 
+const getMoreSongs = async (url) => {
+  const response = await fetch(`https://cors-anywhere.herokuapp.com/${url}`);
+  const data = await response.json();
+  insertSongsIntoPage(data);
+};
+
 const insertSongsIntoPage = (songsInfo) => {
   songsContainer.innerHTML = songsInfo.data
     .map(
@@ -21,7 +27,16 @@ const insertSongsIntoPage = (songsInfo) => {
         </button>
     </li>`
     )
-    .join("");
+    .join("")
+
+  if (songsInfo.prev || songsInfo.next) {
+    prevAndNextContainer.innerHTML = `
+      ${songsInfo.prev ? `<button class="btn" onClick="getMoreSongs('${songsInfo.prev}')">Previous</button>` : ""}
+      ${songsInfo.next ? `<button class="btn" onClick="getMoreSongs('${songsInfo.next}')">Next</button>` : ""}
+    `
+    return
+  }
+  prevAndNextContainer.innerHTML = ""
 };
 
 const fetchSongs = async (term) => {
@@ -29,11 +44,6 @@ const fetchSongs = async (term) => {
   const data = await response.json();
 
   insertSongsIntoPage(data);
-  //   fetch(`${apiURL}/suggest/${term}`)
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       console.log(data[0]);
-  //     });
 };
 
 form.addEventListener("submit", (event) => {
